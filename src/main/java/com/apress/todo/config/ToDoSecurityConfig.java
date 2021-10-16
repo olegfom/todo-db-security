@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -25,7 +26,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.hateoas.EntityModel;
 
 import com.apress.todo.directory.Person;
 
@@ -63,14 +63,13 @@ public class ToDoSecurityConfig extends WebSecurityConfigurerAdapter {
                     if (responseEntity.getStatusCode() == HttpStatus.OK) {
                     	EntityModel<Person> resource = responseEntity.getBody();
                         Person person = resource.getContent();
-                        PasswordEncoder encoder =
-                        PasswordEncoderFactories.createDelegatingPasswordEncoder();
+                        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
                         String password = encoder.encode(person.getPassword());
                         return User
-                  .withUsername(person.getEmail())
-                  .password(password)
-                  .accountLocked(!person.isEnabled())
-                  .roles(person.getRole()).build();
+                        		.withUsername(person.getEmail())
+                        		.password(password)
+                        		.accountLocked(!person.isEnabled())
+                        		.roles(person.getRole()).build();
                     }
                 }catch(Exception ex) {
                     ex.printStackTrace();
